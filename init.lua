@@ -193,7 +193,7 @@ hs.alert.show(".hammerspoon config loaded")
 -----------------------------------------------------------
 wifiWatcher = nil
 homeSSID = "knar"
-workSSID = "WLAND-TWDC"
+workSSID = "WLAN-TWDC"
 lastSSID = hs.wifi.currentNetwork()
 
 function ssidChangedCallback()

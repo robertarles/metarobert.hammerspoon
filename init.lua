@@ -74,7 +74,16 @@ function leaveMode()
 end
 
 function switchToApp(app)
-  hs.alert.show(app,nil,nil,1)
+  hs.alert.show(app, {
+    strokeColor = hs.drawing.color.x11.black,
+    fillColor = hs.drawing.color.x11.black,
+    textColor = hs.drawing.color.x11.yellow,
+    strokeWidth = 5,
+    -- radius = 40,
+    textSize = 20,
+    -- fadeInDuration = 0,
+    atScreenEdge = 1
+  }, nil, 1)
   hs.application.open(app)
   leaveMode()
 end

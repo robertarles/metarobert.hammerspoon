@@ -102,19 +102,18 @@ hs.hotkey.bind({ 'alt' }, 'space', function()
   }, 'infinite')
 end)
 
--- When in launch mode, hitting ctrl+space again leaves it
+-- When in launch mode, hitting alt+space again leaves it
 launchMode:bind({ 'alt' }, 'space', function() leaveMode() end)
 
 -- Mapped keys
 launchMode:bind({}, 'w',  function() switchToApp('Firefox.app') end)
 -- launchMode:bind({}, 'w',  function() switchToApp('Google Chrome.app') end)
 -- launchMode:bind({}, 'w',  function() switchToApp('Safari') end)
-if os.getenv("USER") == "robert"
+if os.getenv("HOST") == "moriarty"
 then
-  launchMode:bind({}, 'm',  function() switchToApp('Mail.app') end)
-elseif os.getenv("USER") == "arler002"
-then
-  launchMode:bind({}, 'm',  function() switchToApp('Microsoft Outlook.app') end)
+  launchMode:bind({}, 'm', function() switchToApp('Mail.app') end)
+else
+  launchMode:bind({}, 'm', function() switchToApp('Microsoft Outlook.app') end)
 end
 launchMode:bind({}, 'b',  function() switchToApp('BlueJeans.app') end) -- bluejeans
 launchMode:bind({}, 's',  function() switchToApp('Slack.app') end) -- slack
@@ -135,7 +134,7 @@ appShiftLauncherAlertWindow = nil
 -- This is the key mode handle
 shiftLaunchMode = hs.hotkey.modal.new({}, nil, '')
 
--- Leaves the launch mode, returning the keyboard to its normal
+-- Leaves the shift launch mode, returning the keyboard to its normal
 -- state, and closes the alert window, if it's showing
 function leaveShiftLaunchMode()
   if appShiftLauncherAlertWindow ~= nil then
@@ -166,10 +165,11 @@ hs.hotkey.bind({ 'alt', 'shift' }, 'space', function()
   }, 'infinite')
 end)
 
--- When in launch mode, hitting ctrl+space again leaves it
-shiftLaunchMode:bind({ 'alt' }, 'space', function() leaveShiftLaunchMode() end)
+-- When in shift launch mode, hitting alt+shift+space again leaves it
+shiftLaunchMode:bind({ 'alt', 'shift' }, 'space', function() leaveShiftLaunchMode() end)
 
 -- Mapped keys
+shiftLaunchMode:bind({}, 'm',  function() switchToShiftApp('Mail.app') end)
 shiftLaunchMode:bind({}, 'w',  function() switchToShiftApp('Brave Browser.app') end)
 shiftLaunchMode:bind({}, 'e',  function() switchToShiftApp('VSCodium.app') end)
 

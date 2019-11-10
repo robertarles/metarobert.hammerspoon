@@ -1,3 +1,47 @@
+-- load "secret" or server specific configurations
+-- example file format 
+-- local _M = {}
+
+-- _M.tablename = {
+--     tableentryone = "someValue"
+-- }
+
+-- return _M
+local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
+--hs.alert(config.iMessage.me)
+
+--talker = hs.speech.new()
+--talker:speak(config.iMessage.me)
+
+hs.messages.iMessage(config.iMessage.me, "new message")
+
+isMoriarty=false
+isCala=false
+for k,v in pairs(hs.host.names()) do
+  if string.match(v, "moriarty") then
+    isMoriarty=true
+  end
+  if string.match(v, "cala") then
+    isMoriarty=true
+  end
+end
+
+caffeine = hs.menubar.new()
+function setCaffeineDisplay(state)
+    if state then
+        caffeine:setTitle("zzzz")
+    else
+        caffeine:setTitle("NOzz")
+    end
+end
+function caffeineClicked()
+  setCaffeineDisplay(hs.caffeinate.toggle("displayIdle"))
+end
+if caffeine then
+  caffeine:setClickCallback(caffeineClicked)
+  setCaffeineDisplay(hs.caffeinate.get("displayIdle"))
+end
+
 hs.window.animationDuration = 0
 
 -- a place to store hotkey objects for later manipulation
@@ -100,7 +144,7 @@ function switchToApp(app)
     -- fadeInDuration = 0,
     atScreenEdge = 1
   }, nil, 1)
-  if string.find(app, '/') == 1 -- starts with a /? Must be a path!
+  if string.find(app, '/') == 1 -- starts with a /? Must be a path, otherwise assume it's an app by name
   then 
     hs.open(app)
   else
@@ -127,16 +171,18 @@ end)
 launchMode:bind({ 'alt' }, 'space', function() leaveMode() end)
 
 -- Mapped keys
+if isMoriarty
+then
+  launchMode:bind({}, 'm', function() switchToApp('Mail.app') end)
+end
+if isCala
+then
+  launchMode:bind({}, 'm', function() switchToApp('Microsoft Outlook.app') end)
+  launchMode:bind({}, 'b',  function() switchToApp('BlueJeans.app') end) -- bluejeans
+end
 launchMode:bind({}, 'w',  function() switchToApp('Firefox.app') end)
 -- launchMode:bind({}, 'w',  function() switchToApp('Google Chrome.app') end)
 -- launchMode:bind({}, 'w',  function() switchToApp('Safari') end)
-if os.getenv("HOST") == "moriarty"
-then
-  launchMode:bind({}, 'm', function() switchToApp('Mail.app') end)
-else
-  launchMode:bind({}, 'm', function() switchToApp('Microsoft Outlook.app') end)
-end
-launchMode:bind({}, 'b',  function() switchToApp('BlueJeans.app') end) -- bluejeans
 launchMode:bind({}, 's',  function() switchToApp('Slack.app') end) -- slack
 launchMode:bind({}, 't',  function() switchToApp('iTerm.app') end) -- zsh 
 launchMode:bind({}, 'v',  function() switchToApp('MacVim.app') end) -- vim 
@@ -166,7 +212,6 @@ function leaveShiftLaunchMode()
   shiftLaunchMode:exit()
 end
 
--- So simple, so awesome.
 function switchToShiftApp(app)
   hs.alert.show(app,nil,nil,1)
   hs.application.open(app)

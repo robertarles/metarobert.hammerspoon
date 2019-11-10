@@ -1,5 +1,21 @@
 hs.window.animationDuration = 0
 
+-- a place to store hotkey objects for later manipulation
+togglyHotkeys = {}
+function enableTogglyHotKeys()
+  for i = 0, #togglyHotkeys, 1 
+  do
+    keyBind.enable();
+  end
+end
+
+function disableTogglyHotkeys()
+  for i = 0, #togglyHotkeys, 1 
+  do
+    keyBind.disable();
+  end
+end
+
 -------------------------------------------------------------
 -- Window Management
 -----------------------------------------------------------
@@ -29,14 +45,14 @@ units = {
 windowKeys = { 'ctrl', 'alt' }
 windowKeysBig = { 'ctrl', 'alt', 'shift' }
 
-hs.hotkey.bind(windowKeys, 'right', function() hs.window.focusedWindow():move(units.right50, nil, true) end)
-hs.hotkey.bind(windowKeysBig, 'right', function() hs.window.focusedWindow():move(units.right75, nil, true) end)
-hs.hotkey.bind(windowKeys, 'left', function() hs.window.focusedWindow():move(units.left50, nil, true) end)
-hs.hotkey.bind(windowKeysBig, 'left', function() hs.window.focusedWindow():move(units.left75, nil, true) end)
-hs.hotkey.bind(windowKeys, 'up', function() hs.window.focusedWindow():move(units.top50, nil, true) end)
-hs.hotkey.bind(windowKeysBig, 'up', function() hs.window.focusedWindow():move(units.top75, nil, true) end)
-hs.hotkey.bind(windowKeys, 'down', function() hs.window.focusedWindow():move(units.bot50, nil, true) end)
-hs.hotkey.bind(windowKeysBig, 'down', function() hs.window.focusedWindow():move(units.bot75, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'right', function() hs.window.focusedWindow():move(units.right50, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'right', function() hs.window.focusedWindow():move(units.right75, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'left', function() hs.window.focusedWindow():move(units.left50, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'left', function() hs.window.focusedWindow():move(units.left75, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'up', function() hs.window.focusedWindow():move(units.top50, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'up', function() hs.window.focusedWindow():move(units.top75, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'down', function() hs.window.focusedWindow():move(units.bot50, nil, true) end)
+togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'down', function() hs.window.focusedWindow():move(units.bot75, nil, true) end)
 
 -- windows to all the corners, always 1/4 screen.
 hs.hotkey.bind(windowKeys, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
@@ -84,7 +100,12 @@ function switchToApp(app)
     -- fadeInDuration = 0,
     atScreenEdge = 1
   }, nil, 1)
-  hs.application.open(app)
+  if string.find(app, '/') == 1 -- starts with a /? Must be a path!
+  then 
+    hs.open(app)
+  else
+    hs.application.open(app)
+  end
   leaveMode()
 end
 
@@ -120,6 +141,7 @@ launchMode:bind({}, 's',  function() switchToApp('Slack.app') end) -- slack
 launchMode:bind({}, 't',  function() switchToApp('iTerm.app') end) -- zsh 
 launchMode:bind({}, 'v',  function() switchToApp('MacVim.app') end) -- vim 
 launchMode:bind({}, 'c',  function() switchToApp('Visual Studio Code.app') end) -- text edit
+launchMode:bind({}, 'f',  function() switchToApp('/Users/robert/') end) -- text edit
 
 -----------------------------------------------------------
 -- alt shift LAUNCH MODE

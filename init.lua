@@ -1,12 +1,12 @@
 -- load "secret" or server specific configurations
--- example file format 
+-- example file format
+---------------- 
 -- local _M = {}
-
--- _M.tablename = {
---     tableentryone = "someValue"
+-- _M.iMessage = {
+--     me = "myImessageAddress"
 -- }
-
 -- return _M
+----------------
 local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
 
 isMoriarty=false

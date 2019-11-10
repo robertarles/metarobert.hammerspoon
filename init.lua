@@ -8,12 +8,6 @@
 
 -- return _M
 local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
---hs.alert(config.iMessage.me)
-
---talker = hs.speech.new()
---talker:speak(config.iMessage.me)
-
-hs.messages.iMessage(config.iMessage.me, "new message")
 
 isMoriarty=false
 isCala=false
@@ -294,6 +288,8 @@ end
 
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
 wifiWatcher:start()
+
+
 -----------------------------------------------------------
 -- url triggers
 -----------------------------------------------------------
@@ -302,4 +298,13 @@ wifiWatcher:start()
 hs.urlevent.bind("alert", function(eventName, params)
   --hs.alert.show(params["message"]) -- hammerspoon alert (shorter, less intrusive)
   hs.notify.new({title="Hammerspoon", informativeText=params["message"]}):send() -- native macos notifier
+end)
+
+hs.urlevent.bind("imessage", function(eventName, params)
+  hs.messages.iMessage(config.iMessage.me, params["message"])
+end)
+
+hs.urlevent.bind("say", function(eventName, params)
+  talker = hs.speech.new()
+  talker:speak(params["message"])
 end)

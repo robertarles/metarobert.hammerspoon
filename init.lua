@@ -7,8 +7,11 @@
 -- }
 -- return _M
 ----------------
+-- load the config
 local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
 
+
+-- set some booleans that indicate what host we are on (os.getenv('HOST') does not work, HOST is not set in this context)
 isMoriarty=false
 isCala=false
 for k,v in pairs(hs.host.names()) do
@@ -20,26 +23,41 @@ for k,v in pairs(hs.host.names()) do
   end
 end
 
-caffeine = hs.menubar.new()
-function setCaffeineDisplay(state)
+--------------------
+-- NoZ
+-- Create a menu item to toggle sleep (z's) on and off
+--------------------
+noz = hs.menubar.new()
+isNoz = true -- start true, causing initial load to toggle to false, --> sleep works by default
+function setNozDisplay(state)
     if state then
-        caffeine:setTitle("zzzz")
+      local handle = io.popen("sudo /Users/robert/bin/macos-enablesleep.sh")
+      local result = handle:read("*a")
+      handle:close()
+      noz:setTitle('|-[') -- sleepyface
+      isNoz=false
     else
-        caffeine:setTitle("NOzz")
+      local handle = io.popen("sudo /Users/robert/bin/macos-disablesleep.sh")
+      local result = handle:read("*a")
+      handle:close()
+      noz:setTitle('8-]') -- tweakingface
+      isNoz=true
     end
 end
-function caffeineClicked()
-  setCaffeineDisplay(hs.caffeinate.toggle("displayIdle"))
+function nozClicked()
+  setNozDisplay(isNoz)
 end
-if caffeine then
-  caffeine:setClickCallback(caffeineClicked)
-  setCaffeineDisplay(hs.caffeinate.get("displayIdle"))
+if noz then
+  noz:setClickCallback(nozClicked)
+  setNozDisplay(isNoz)
 end
+--------------------
+
 
 hs.window.animationDuration = 0
 
 -- a place to store hotkey objects for later manipulation
-togglyHotkeys = {}
+togglyHotkeys = {} -- binding a hotkey, add it to this table to allow it to be toggled of and on
 function enableTogglyHotKeys()
   for i = 0, #togglyHotkeys, 1 
   do
@@ -97,6 +115,7 @@ hs.hotkey.bind(windowKeys, 'l', function() hs.window.focusedWindow():move(units.
 hs.hotkey.bind(windowKeys, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
 hs.hotkey.bind(windowKeys, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
 hs.hotkey.bind(windowKeys, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
+
 hs.hotkey.bind(windowKeys, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
 hs.hotkey.bind(windowKeys, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
 
@@ -107,7 +126,7 @@ hs.hotkey.bind({ 'ctrl', 'shift' }, 'right', function()  hs.window.focusedWindow
 hs.hotkey.bind({ 'ctrl', 'shift' }, 'left', function() hs.window.focusedWindow():moveOneScreenWest(false, true) end)
 
 -----------------------------------------------------------
--- LAUNCH MODE (alt) 
+-- LAUNCH MODE (alt)
 -----------------------------------------------------------
 -- alt+space alternative to cmd+space
 
@@ -184,7 +203,7 @@ launchMode:bind({}, 'c',  function() switchToApp('Visual Studio Code.app') end) 
 launchMode:bind({}, 'f',  function() switchToApp('/Users/robert/') end) -- text edit
 
 -----------------------------------------------------------
--- alt shift LAUNCH MODE
+-- alt shift LAUNCH MODE (alternate apps)
 -----------------------------------------------------------
 -- alt+shift+space for alternative app lanches
 -- place any shortcut collisions here 

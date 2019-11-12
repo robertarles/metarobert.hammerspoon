@@ -10,18 +10,23 @@
 -- load the config
 local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
 
+-- a place to store hotkey objects for later manipulation
+-- toggle functions at bottom of file (after all of the toggly keys are put in the togglyHotkeys table)
+togglyHotkeys = {} -- when binding a hotkey, add it to this table to allow it to be toggled of and on
 
 -- set some booleans that indicate what host we are on (os.getenv('HOST') does not work, HOST is not set in this context)
-isMoriarty=false
-isCala=false
+isPersonalHost=false
+isWorkHost=false
 for k,v in pairs(hs.host.names()) do
-  if string.match(v, "moriarty") then
-    isMoriarty=true
+  if string.match(v, config.hostname.personal) then
+    isPersonalHost
+  =true
   end
-  if string.match(v, "cala") then
-    isMoriarty=true
+  if string.match(v, config.hostname.work) then
+    isWorkHost=true
   end
 end
+
 
 --------------------
 -- NoZ
@@ -31,13 +36,13 @@ noz = hs.menubar.new()
 isNoz = true -- start true, causing initial load to toggle to false, --> sleep works by default
 function setNozDisplay(state)
     if state then
-      local handle = io.popen("sudo /Users/robert/bin/macos-enablesleep.sh")
+      local handle = io.popen("sudo "..os.getenv("HOME").."/bin/macos-enablesleep.sh")
       local result = handle:read("*a")
       handle:close()
       noz:setTitle('|-[') -- sleepyface
       isNoz=false
     else
-      local handle = io.popen("sudo /Users/robert/bin/macos-disablesleep.sh")
+      local handle = io.popen("sudo "..os.getenv("HOME").."/bin/macos-disablesleep.sh")
       local result = handle:read("*a")
       handle:close()
       noz:setTitle('8-]') -- tweakingface
@@ -55,22 +60,6 @@ end
 
 
 hs.window.animationDuration = 0
-
--- a place to store hotkey objects for later manipulation
-togglyHotkeys = {} -- binding a hotkey, add it to this table to allow it to be toggled of and on
-function enableTogglyHotKeys()
-  for i = 0, #togglyHotkeys, 1 
-  do
-    keyBind.enable();
-  end
-end
-
-function disableTogglyHotkeys()
-  for i = 0, #togglyHotkeys, 1 
-  do
-    keyBind.disable();
-  end
-end
 
 -------------------------------------------------------------
 -- Window Management
@@ -101,29 +90,29 @@ units = {
 windowKeys = { 'ctrl', 'alt' }
 windowKeysBig = { 'ctrl', 'alt', 'shift' }
 
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'right', function() hs.window.focusedWindow():move(units.right50, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'right', function() hs.window.focusedWindow():move(units.right75, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'left', function() hs.window.focusedWindow():move(units.left50, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'left', function() hs.window.focusedWindow():move(units.left75, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'up', function() hs.window.focusedWindow():move(units.top50, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'up', function() hs.window.focusedWindow():move(units.top75, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeys, 'down', function() hs.window.focusedWindow():move(units.bot50, nil, true) end)
-togglyHotkeys[#togglyHotkeys] = hs.hotkey.bind(windowKeysBig, 'down', function() hs.window.focusedWindow():move(units.bot75, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'right', function() hs.window.focusedWindow():move(units.right50, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'right', function() hs.window.focusedWindow():move(units.right75, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'left', function() hs.window.focusedWindow():move(units.left50, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'left', function() hs.window.focusedWindow():move(units.left75, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'up', function() hs.window.focusedWindow():move(units.top50, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'up', function() hs.window.focusedWindow():move(units.top75, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'down', function() hs.window.focusedWindow():move(units.bot50, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'down', function() hs.window.focusedWindow():move(units.bot75, nil, true) end)
 
 -- windows to all the corners, always 1/4 screen.
-hs.hotkey.bind(windowKeys, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
-hs.hotkey.bind(windowKeys, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
-hs.hotkey.bind(windowKeys, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
-hs.hotkey.bind(windowKeys, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
 
-hs.hotkey.bind(windowKeys, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
-hs.hotkey.bind(windowKeys, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
 
 -----------------------------------------------------------
 --Window to workspace movement
 -----------------------------------------------------------
-hs.hotkey.bind({ 'ctrl', 'shift' }, 'right', function()  hs.window.focusedWindow():moveOneScreenEast(false, true) end)
-hs.hotkey.bind({ 'ctrl', 'shift' }, 'left', function() hs.window.focusedWindow():moveOneScreenWest(false, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind({ 'ctrl', 'shift' }, 'right', function()  hs.window.focusedWindow():moveOneScreenEast(false, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind({ 'ctrl', 'shift' }, 'left', function() hs.window.focusedWindow():moveOneScreenWest(false, true) end)
 
 -----------------------------------------------------------
 -- LAUNCH MODE (alt)
@@ -184,11 +173,11 @@ end)
 launchMode:bind({ 'alt' }, 'space', function() leaveMode() end)
 
 -- Mapped keys
-if isMoriarty
+if isPersonalHost
 then
   launchMode:bind({}, 'm', function() switchToApp('Mail.app') end)
 end
-if isCala
+if isWorkHost
 then
   launchMode:bind({}, 'm', function() switchToApp('Microsoft Outlook.app') end)
   launchMode:bind({}, 'b',  function() switchToApp('BlueJeans.app') end) -- bluejeans
@@ -200,7 +189,7 @@ launchMode:bind({}, 's',  function() switchToApp('Slack.app') end) -- slack
 launchMode:bind({}, 't',  function() switchToApp('iTerm.app') end) -- zsh 
 launchMode:bind({}, 'v',  function() switchToApp('MacVim.app') end) -- vim 
 launchMode:bind({}, 'c',  function() switchToApp('Visual Studio Code.app') end) -- text edit
-launchMode:bind({}, 'f',  function() switchToApp('/Users/robert/') end) -- text edit
+launchMode:bind({}, 'f',  function() switchToApp(os.getenv("HOME")) end) -- text edit
 
 -----------------------------------------------------------
 -- alt shift LAUNCH MODE (alternate apps)
@@ -281,8 +270,8 @@ hs.alert.show(".hammerspoon config loaded")
 -- Do stuff based on wifi SSID
 -----------------------------------------------------------
 wifiWatcher = nil
-homeSSID = "knar"
-workSSID = "WLAN-TWDC"
+homeSSID = config.wifi.home
+workSSID = config.wifi.work
 lastSSID = hs.wifi.currentNetwork()
 
 function ssidChangedCallback()
@@ -308,12 +297,11 @@ end
 wifiWatcher = hs.wifi.watcher.new(ssidChangedCallback)
 wifiWatcher:start()
 
-
 -----------------------------------------------------------
 -- url triggers
 -----------------------------------------------------------
--- example use from the command line: `open -g hammerspoon://alert?message="testvalue is complex this time, robert"`
--- example use from the command line (-g seems not needed): `open hammerspoon://alert?message="testvalue is complex this time, robert"`
+-- example use from the command line: `open -g hammerspoon://alert?message="A message for you!"`
+-- example use from the command line (-g seems not needed): `open hammerspoon://alert?message="A message for you!"`
 hs.urlevent.bind("alert", function(eventName, params)
   --hs.alert.show(params["message"]) -- hammerspoon alert (shorter, less intrusive)
   hs.notify.new({title="Hammerspoon", informativeText=params["message"]}):send() -- native macos notifier
@@ -327,3 +315,23 @@ hs.urlevent.bind("say", function(eventName, params)
   talker = hs.speech.new()
   talker:speak(params["message"])
 end)
+
+-------------
+-- for every hotkey stored in togglyHotkeys table, we can turn them on and off
+-- togglyHotkeys has to be defined at the top, and these binding set up AFTER keybinds are added to the togglyHotkeys table
+-------------
+hs.hotkey.bind({"ctrl","alt","cmd"}, 'e', function() enableTogglyHotKeys() end)
+hs.hotkey.bind({"ctrl","alt","cmd"}, 'd', function() disableTogglyHotkeys() end)
+function enableTogglyHotKeys()
+  for i = 1, #togglyHotkeys, 1 
+  do
+    togglyHotkeys[i]:enable();
+  end
+end
+
+function disableTogglyHotkeys()
+  for i = 1, #togglyHotkeys, 1 
+  do
+    togglyHotkeys[i]:disable();
+  end
+end

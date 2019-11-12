@@ -327,6 +327,7 @@ function enableTogglyHotKeys()
   do
     togglyHotkeys[i]:enable();
   end
+  hs.alert("enabling togglyHotkeys")
 end
 
 function disableTogglyHotkeys()
@@ -334,4 +335,5 @@ function disableTogglyHotkeys()
   do
     togglyHotkeys[i]:disable();
   end
+  hs.alert("disabling togglyHotkeys")
 end

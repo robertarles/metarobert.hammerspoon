@@ -65,74 +65,75 @@ hs.window.animationDuration = 0
 -----------------------------------------------------------
 
 units = {
-  right50 = { x = 0.50, y = 0.00, w = 0.50, h = 1.00 },
-  right75 = { x = 0.25, y = 0.00, w = 0.75, h = 1.00 },
-  left50 = { x = 0.00, y = 0.00, w = 0.50, h = 1.00 },
-  left75 = { x = 0.00, y = 0.00, w = 0.75, h = 1.00 },
-  top50 = { x = 0.00, y = 0.00, w = 1.00, h = 0.50 },
-  top75 = { x = 0.00, y = 0.00, w = 1.00, h = 0.75 },
-  bot50 = { x = 0.00, y = 0.50, w = 1.00, h = 0.50 },
-  bot75 = { x = 0.00, y = 0.25, w = 1.00, h = 0.75 },
+  right = { x = 0.50, y = 0.00, w = 0.50, h = 1.00 },
+  rightBig = { x = 0.25, y = 0.00, w = 0.75, h = 1.00 },
+  left = { x = 0.00, y = 0.00, w = 0.50, h = 1.00 },
+  leftBig = { x = 0.00, y = 0.00, w = 0.75, h = 1.00 },
+  top = { x = 0.00, y = 0.00, w = 1.00, h = 0.50 },
+  topBig = { x = 0.00, y = 0.00, w = 1.00, h = 0.75 },
+  bot = { x = 0.00, y = 0.50, w = 1.00, h = 0.50 },
+  botBig = { x = 0.00, y = 0.25, w = 1.00, h = 0.75 },
   upright = { x = 0.50, y = 0.00, w = 0.50, h = 0.50 },
   botright = { x = 0.50, y = 0.50, w = 0.50, h = 0.50 },
   upleft = { x = 0.00, y = 0.00, w = 0.50, h = 0.50 },
   botleft = { x = 0.00, y = 0.50, w = 0.50, h = 0.50 },
+  topRightBig = { x = 0.25, y = 0.00, w = 0.75, h = 0.75 },
+  botRightBig = { x = 0.25, y = 0.25, w = 0.75, h = 0.75 },
+  topLeftBig = { x = 0.00, y = 0.00, w = 0.75, h = 0.75 },
+  botLeftBig = { x = 0.00, y = 0.25, w = 0.75, h = 0.75 },
   maximum = { x = 0.00, y = 0.00, w = 1.00, h = 1.00 },
   middle = {x = 0.12, y = 0.13, w = 0.75, h = 0.75 }
 }
 
 -----------------------------------------------------------
--- Window SNAPping.
+-- Window placement: position on screen
 -----------------------------------------------------------
 
 -- window right, left, up and down. 
-windowKeys = { 'ctrl', 'alt' }
-windowKeysBig = { 'ctrl', 'alt', 'shift' }
+windowPlaceHotkey = { 'ctrl', 'alt' }
+windowPlaceBigHotkey = { 'ctrl', 'alt', 'shift' }
 
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'right', function() hs.window.focusedWindow():move(units.right50, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'right', function() hs.window.focusedWindow():move(units.right75, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'left', function() hs.window.focusedWindow():move(units.left50, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'left', function() hs.window.focusedWindow():move(units.left75, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'up', function() hs.window.focusedWindow():move(units.top50, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'up', function() hs.window.focusedWindow():move(units.top75, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'down', function() hs.window.focusedWindow():move(units.bot50, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeysBig, 'down', function() hs.window.focusedWindow():move(units.bot75, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'right', function() hs.window.focusedWindow():move(units.right, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'right', function() hs.window.focusedWindow():move(units.rightBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'left', function() hs.window.focusedWindow():move(units.left, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'left', function() hs.window.focusedWindow():move(units.leftBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'up', function() hs.window.focusedWindow():move(units.top, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'up', function() hs.window.focusedWindow():move(units.topBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'down', function() hs.window.focusedWindow():move(units.bot, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'down', function() hs.window.focusedWindow():move(units.botBig, nil, true) end)
 
 -- windows to all the corners, always 1/4 screen.
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'l', function() hs.window.focusedWindow():move(units.topRightBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'k', function() hs.window.focusedWindow():move(units.topLeftBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, ',', function() hs.window.focusedWindow():move(units.botLeftBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, ".", function() hs.window.focusedWindow():move(units.botRightBig, nil, true) end)
 
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowKeys, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
 
 -----------------------------------------------------------
---Window to workspace movement
+-- Window placement: which screen to place on
 -----------------------------------------------------------
+
 togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind({ 'ctrl', 'shift' }, 'right', function()  hs.window.focusedWindow():moveOneScreenEast(false, true) end)
 togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind({ 'ctrl', 'shift' }, 'left', function() hs.window.focusedWindow():moveOneScreenWest(false, true) end)
 
+
 -----------------------------------------------------------
--- LAUNCH MODE (alt)
+-- SCREENS (macos spaces)
 -----------------------------------------------------------
--- alt+space alternative to cmd+space
 
--- We need to store the reference to the alert window
-appLauncherAlertWindow = nil
+spacesHotKey = {'cmd', 'shift'}
+-- these are actually set in keyboard shortcuts
 
--- This is the key mode handle
-launchMode = hs.hotkey.modal.new({}, nil, '')
 
--- Leaves the launch mode, returning the keyboard to its normal
--- state, and closes the alert window, if it's showing
-function leaveMode()
-  if appLauncherAlertWindow ~= nil then
-    hs.alert.closeSpecific(appLauncherAlertWindow, 0)
-    appLauncherAlertWindow = nil
-  end
-  launchMode:exit()
-end
+-----------------------------------------------------------
+-- APP LAUNCHERS (alt)
+-----------------------------------------------------------
 
 function switchToApp(app)
   hs.alert.show(app, {
@@ -145,7 +146,8 @@ function switchToApp(app)
     -- fadeInDuration = 0,
     atScreenEdge = 1
   }, nil, 1)
-  if string.find(app, '/') == 1 -- starts with a /? Must be a path, otherwise assume it's an app by name
+
+  if (string.find(app, '/') == 1) -- starts with a /, it is a path, otherwise assume it's an app by name
   then 
     hs.open(app)
   else
@@ -154,94 +156,26 @@ function switchToApp(app)
   leaveMode()
 end
 
-hs.hotkey.bind({ 'alt' }, 'space', function()
-  launchMode:enter()
-  appLauncherAlertWindow = hs.alert.show('Launcher Mode', {
-    strokeColor = hs.drawing.color.x11.black,
-    -- fillColor = hs.drawing.color.x11.white,
-    textColor = hs.drawing.color.x11.green,
-    strokeWidth = 5,
-    -- radius = 40,
-    -- textSize = 16,
-    -- fadeInDuration = 0,
-    -- atScreenEdge = 2
-  }, 'infinite')
-end)
-
--- When in launch mode, hitting alt+space again leaves it
-launchMode:bind({ 'alt' }, 'space', function() leaveMode() end)
-
 -- Mapped keys
+appLaunchHotkey = {'alt'}
 if isPersonalHost
 then
-  launchMode:bind({}, 'w',  function() switchToApp('/Applications/Firefox.app') end)
-  launchMode:bind({}, 'm', function() switchToApp('Mail.app') end)
+  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'w',  function() switchToApp('/Applications/Firefox.app') end) -- Web
+  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'm', function() switchToApp('Mail.app') end) -- Mail
 end
 if isWorkHost
 then
-  launchMode:bind({}, 'w',  function() switchToApp('/Users/robert/Applications/Firefox.app') end) -- avoid old, enterprise managed installation of ff
-  launchMode:bind({}, 'm', function() switchToApp('Microsoft Outlook.app') end)
-  launchMode:bind({}, 'b',  function() switchToApp('BlueJeans.app') end) -- bluejeans
+  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'w',  function() switchToApp(os.getenv("HOME")..'/Applications/Firefox.app') end) -- Web. avoid old, enterprise managed installation of ff
+  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'm', function() switchToApp('Microsoft Outlook.app') end) -- Mail
+  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'b',  function() switchToApp('BlueJeans.app') end) -- Bluejeans
 end
--- launchMode:bind({}, 'w',  function() switchToApp('Google Chrome.app') end)
--- launchMode:bind({}, 'w',  function() switchToApp('Safari') end)
-launchMode:bind({}, 's',  function() switchToApp('Slack.app') end) -- slack
-launchMode:bind({}, 't',  function() switchToApp('iTerm.app') end) -- zsh 
-launchMode:bind({}, 'v',  function() switchToApp('MacVim.app') end) -- vim 
-launchMode:bind({}, 'c',  function() switchToApp('Visual Studio Code.app') end) -- text edit
-launchMode:bind({}, 'f',  function() switchToApp(os.getenv("HOME")) end) -- text edit
-
------------------------------------------------------------
--- alt shift LAUNCH MODE (alternate apps)
------------------------------------------------------------
--- alt+shift+space for alternative app lanches
--- place any shortcut collisions here 
--- ( e.g. shift will make the alternative choice for the letter, w = firefix shift w = brave, or e = vscode, shift+e = codium)
-
--- We need to store the reference to the alert window
-appShiftLauncherAlertWindow = nil
-
--- This is the key mode handle
-shiftLaunchMode = hs.hotkey.modal.new({}, nil, '')
-
--- Leaves the shift launch mode, returning the keyboard to its normal
--- state, and closes the alert window, if it's showing
-function leaveShiftLaunchMode()
-  if appShiftLauncherAlertWindow ~= nil then
-    hs.alert.closeSpecific(appShiftLauncherAlertWindow, 0)
-    appShiftLauncherAlertWindow = nil
-  end
-  shiftLaunchMode:exit()
-end
-
-function switchToShiftApp(app)
-  hs.alert.show(app,nil,nil,1)
-  hs.application.open(app)
-  leaveShiftLaunchMode()
-end
-
-hs.hotkey.bind({ 'alt', 'shift' }, 'space', function()
-  shiftLaunchMode:enter()
-  appShiftLauncherAlertWindow = hs.alert.show('Shift Launcher Mode', {
-    strokeColor = hs.drawing.color.x11.black,
-    -- fillColor = hs.drawing.color.x11.white,
-    textColor = hs.drawing.color.x11.green,
-    strokeWidth = 5,
-    -- radius = 40,
-    -- textSize = 16,
-    -- fadeInDuration = 0,
-    -- atScreenEdge = 2
-  }, 'infinite')
-end)
-
--- When in shift launch mode, hitting alt+shift+space again leaves it
-shiftLaunchMode:bind({ 'alt', 'shift' }, 'space', function() leaveShiftLaunchMode() end)
-
--- Mapped keys
-shiftLaunchMode:bind({}, 'm',  function() switchToShiftApp('Mail.app') end)
-shiftLaunchMode:bind({}, 'w',  function() switchToShiftApp('Brave Browser.app') end)
-shiftLaunchMode:bind({}, 'e',  function() switchToShiftApp('VSCodium.app') end)
-
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 's',  function() switchToApp('Slack.app') end) -- Slack
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 't',  function() switchToApp('iTerm.app') end) -- Terminal 
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'e',  function() switchToApp('Visual Studio Code.app') end) -- Editor
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'v',  function() switchToApp('Visual Studio Code.app') end) -- vscode
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'a',  function() switchToApp('Atom.app') end) -- Atom
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'f',  function() switchToApp(os.getenv("HOME")) end) -- File manager, $HOME
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'a',  function() hs.execute [["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents-DISNEY/NOTES/DISNEY/todos-DIS.md"]] end)
 -----------------------------------------------------------
 -- Reload hammerspoon config
 -----------------------------------------------------------
@@ -321,9 +255,11 @@ end)
 --------------------------------------------------------------------------------
 -- for every hotkey stored in togglyHotkeys table, we can turn them on and off
 -- togglyHotkeys has to be defined at the top, and these binding set up AFTER keybinds are added to the togglyHotkeys table
+
 --------------------------------------------------------------------------------
 hs.hotkey.bind({"ctrl","alt","cmd"}, 'e', function() enableTogglyHotKeys() end)
 hs.hotkey.bind({"ctrl","alt","cmd"}, 'd', function() disableTogglyHotkeys() end)
+
 function enableTogglyHotKeys()
   for i = 1, #togglyHotkeys, 1 
   do

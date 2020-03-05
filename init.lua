@@ -171,11 +171,68 @@ then
 end
 togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 's',  function() switchToApp('Slack.app') end) -- Slack
 togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 't',  function() switchToApp('iTerm.app') end) -- Terminal 
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'v',  function() switchToApp('Visual Studio Code.app') end) -- Editor
 togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'e',  function() switchToApp('Visual Studio Code.app') end) -- Editor
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'v',  function() switchToApp('Visual Studio Code.app') end) -- vscode
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'a',  function() switchToApp('Atom.app') end) -- Atom
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'a',  function() switchToApp('Atom.app') end) -- Editor
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'i',  function() switchToApp('IntelliJ IDEA CE.app') end) -- Editor
 togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'f',  function() switchToApp(os.getenv("HOME")) end) -- File manager, $HOME
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'a',  function() hs.execute [["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents-DISNEY/NOTES/DISNEY/todos-DIS.md"]] end)
+
+
+--
+-- ARCHIVAL keybindings
+--
+
+-- We need to store the reference to the alert window
+archiveLauncherAlertWindow = nil
+
+-- This is the key mode handle
+launchArchiveMode = hs.hotkey.modal.new({}, nil, '')
+
+-- Leaves the launch mode, returning the keyboard to its normal
+-- state, and closes the alert window, if it's showing
+function leaveArchiveMode()
+  if archiveLauncherAlertWindow ~= nil then
+    hs.alert.closeSpecific(archiveLauncherAlertWindow, 0)
+    archiveLauncherAlertWindow = nil
+  end
+  launchArchiveMode:exit()
+end
+
+function launchArchivalFunction(app)
+  hs.alert.show(app, {
+    strokeColor = hs.drawing.color.x11.black,
+    fillColor = hs.drawing.color.x11.black,
+    textColor = hs.drawing.color.x11.yellow,
+    strokeWidth = 5,
+    -- radius = 40,
+    textSize = 20,
+    -- fadeInDuration = 0,
+    atScreenEdge = 1
+  }, nil, 1)
+  hs.execute(app)
+  leaveArchiveMode()
+end
+
+hs.hotkey.bind({ 'alt' }, 'n', function()
+  launchArchiveMode:enter()
+  archiveLauncherAlertWindow = hs.alert.show('Notesman Launcher Mode', {
+    strokeColor = hs.drawing.color.x11.black,
+    -- fillColor = hs.drawing.color.x11.white,
+    textColor = hs.drawing.color.x11.green,
+    strokeWidth = 5,
+    -- radius = 40,
+    -- textSize = 16,
+    -- fadeInDuration = 0,
+    -- atScreenEdge = 2
+  }, 'infinite')
+end)
+
+-- When in launch mode, hitting alt+space again leaves it
+launchArchiveMode:bind({ 'alt' }, 'n', function() leaveArchiveMode() end)
+launchArchiveMode:bind({}, 'd',  function() launchArchivalFunction([["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents-DISNEY/NOTES/DISNEY/todos-DIS.md"]]) end) -- DISNEY notes management
+launchArchiveMode:bind({}, 'm',  function() launchArchivalFunction([["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents/NOTES/ME/TODO.md"]]) end) -- ME notes management
+-- togglyHotkeys[#togglyHotkeys+1] = launchArchiveMode.bind({"alt"}, {'a', 'd'},  function() hs.execute [["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents-DISNEY/NOTES/DISNEY/todos-DIS.md"]] end)
+
 -----------------------------------------------------------
 -- Reload hammerspoon config
 -----------------------------------------------------------

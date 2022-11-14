@@ -1,4 +1,78 @@
--- load "secret" or server specific configurations
+-- a place to store hotkey objects for later manipulation
+-- toggle functions at bottom of file (after all of the toggly keys are put in the togglyHotkeys table)
+togglyHotkeys = {} -- when binding a hotkey, add it to this table to allow it to be toggled of and on
+
+-- hotkey to place a timestamp in the pasteboard/clibpoard
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind({'cmd', 'alt'}, '`', function()
+  hs.pasteboard.setContents(os.date("%Y-%m-%dT%H:%M:%S"))
+end)
+
+-- macos host caps lock is confured (karabiner-elements' "complex modifications") to act as hyperkey
+hyperkey = {'cmd','ctrl','option','shift'}
+
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, '1', function()
+  -- run once for each notes domain, each has it's own TODO list
+  hs.execute ("notesman /Users/robert/docs.plaintext/dendron/notes/todo.disney.md", true) -- DISNEY notes management
+  hs.execute ("notesman /Users/robert/docs.plaintext/dendron/notes/todo.personal.md", true) -- ME notes management
+end) -- notesman task management
+
+
+-- configure hotkeys to launch apps
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'v', function()
+  switchTo('visual studio Code.app') -- "v"scode
+end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'f', function()
+  switchTo('/System/Library/CoreServices/Finder.app')
+end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'm', function()
+  switchTo('Calendar.app','Mail.app')
+end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'c', function()
+  switchTo('VSCodium.app') -- "c"odium
+end)
+--togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'e', function()
+--  switchTo('Emacs.app') -- "e"macs
+--end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'g', function()
+ switchTo('neovide')
+ switchTo('Neovide.app') -- "g"vim
+end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 't', function()
+  switchTo('iTerm.app') 
+  --switchTo('warp.app') -- "t"erminal
+end)
+-- no w for web...hyper-w disabled via karabiner
+-- adding b for browsers, hyper-w was creating _massive_ WiFi diagnostics files in /private/var/tmp, no way to override this key combo!
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'b', function()
+  switchTo('/Applications/Brave Browser.app') -- "b"rowser
+end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(hyperkey, 'z', function()
+  switchTo('zoom.us.app')
+end)
+
+-- launch if not running OR switch to app
+-- this now allows an optional second app (eg. launching mail can also launch calendar)
+function switchTo(app,app2)
+  
+  if (string.find(app, '/') == 1) -- starts with a /, it is a path, otherwise assume it's an app by name
+  then
+    hs.open(app)
+  else
+    hs.application.open(app)
+  end
+
+  if (string.find(app2, '/') == 1) -- starts with a /, it is a path, otherwise assume it's an app by name
+  then
+    hs.open(app2)
+  else
+    hs.application.open(app2)
+  end
+  
+  hyper.triggered = true
+
+end
+
+-- load secrets or other server specific configurations from local file
 -- example file format
 ---------------- 
 -- local _M = {}
@@ -8,52 +82,73 @@
 -- return _M
 ----------------
 -- load the config
-local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
-
--- a place to store hotkey objects for later manipulation
--- toggle functions at bottom of file (after all of the toggly keys are put in the togglyHotkeys table)
-togglyHotkeys = {} -- when binding a hotkey, add it to this table to allow it to be toggled of and on
-
 -- set some booleans that indicate what host we are on (os.getenv('HOST') does not work, HOST is not set in this context)
 isPersonalHost=false
 isWorkHost=false
-for k,v in pairs(hs.host.names()) do
-  if string.match(v, config.hostname.personal) then
-    isPersonalHost
-  =true
+--if hs.fs.fileUTI(os.getenv( "HOME" ).."/.hammerspoon.env.lua") then
+  local config = dofile(os.getenv( "HOME" ).."/.hammerspoon.env.lua")
+
+  for k,v in pairs(hs.host.names()) do
+    if string.match(v, config.hostname.personal) then
+      isPersonalHost=true
+    end
+    if string.match(v, config.hostname.work) then
+      isWorkHost=true
+    end
   end
-  if string.match(v, config.hostname.work) then
-    isWorkHost=true
-  end
-end
+--end
 
 --------------------
--- NoZ
+-- NoZZZ
 -- Create a menu item to toggle sleep (z's) on and off
 --------------------
-noz = hs.menubar.new()
-isNoz = true -- start true, causing initial load to toggle to false, --> sleep works by default
-function setNozDisplay(state)
+noZzz = hs.menubar.new()
+isNoZzz = true -- start true, causing initial load to toggle to false, --> sleep works by default
+function setNoZzzDisplay(state)
     if state then
+      hs.caffeinate.set("system", false, true) -- false to allow sleep, true to apply to both ac and battery (NOTE APPEARS TO HAVE NO EFFECT)      -- manually take care of this, hs.caffeinate appears...useless?      -- manually take care of this, hs.caffeinate appears...useless?      -- manually take care of this, hs.caffeinate appears...useless?      -- manually take care of this, hs.caffeinate appears...useless?      -- manually take care of this, hs.caffeinate appears...useless?      -- manually take care of this, hs.caffeinate appears...useless?      -- manually take care of this, hs.caffeinate appears...useless?
+      -- manually take care of this, hs.caffeinate appears...useless?
       local handle = io.popen("sudo "..os.getenv("HOME").."/bin/macos-enablesleep.sh")
       local result = handle:read("*a")
       handle:close()
-      noz:setTitle('|-[') -- sleepyface
-      isNoz=false
+      noZzz:setTitle('💤') -- sleepingface
+      hs.alert.show("💤 sleep on 💤", {                  
+        strokeColor = hs.drawing.color.x11.black,
+        -- fillColor = hs.drawing.color.x11.black,
+        textColor = hs.drawing.color.x11.blue,
+        -- strokeWidth = 5,
+        radius = 20,
+        textSize = 50,
+        fadeInDuration = .5,
+        -- atScreenEdge = 1
+      }, 2)
+      isNoZzz=false
     else
+      hs.caffeinate.set("system", true, true) -- true to prevent sleep, true to apply to both ac and battery (NOTE APPEARS TO HAVE NO EFFECT)
+      -- manually take care of this, hs.caffeinate appears...useless?
       local handle = io.popen("sudo "..os.getenv("HOME").."/bin/macos-disablesleep.sh")
       local result = handle:read("*a")
       handle:close()
-      noz:setTitle('8-]') -- tweakingface
-      isNoz=true
+      noZzz:setTitle('💥') -- tweakingface
+      hs.alert.show("💥 NO SLEEP 💥", {                  
+        strokeColor = hs.drawing.color.x11.black,
+        -- fillColor = hs.drawing.color.x11.black,
+        textColor = hs.drawing.color.x11.yellow,
+        -- strokeWidth = 5,
+        radius = 20,
+        textSize = 50,
+        fadeInDuration = .5,
+        -- atScreenEdge = 1
+      }, 2)
+      isNoZzz=true
     end
 end
-function nozClicked()
-  setNozDisplay(isNoz)
+function noZzzClicked()
+  setNoZzzDisplay(isNoZzz)
 end
-if noz then
-  noz:setClickCallback(nozClicked)
-  setNozDisplay(isNoz)
+if noZzz then
+  noZzz:setClickCallback(noZzzClicked)
+  setNoZzzDisplay(isNoZzz)
 end
 --------------------
 
@@ -86,34 +181,34 @@ units = {
 }
 
 -----------------------------------------------------------
--- Window placement: position on screen
+-- Window snap placement: position on screen
 -----------------------------------------------------------
 
 -- window right, left, up and down. 
-windowPlaceHotkey = { 'ctrl', 'alt' }
-windowPlaceBigHotkey = { 'ctrl', 'alt', 'shift' }
+windowSnapHotkey = {'alt', 'ctrl'}
+windowBigSnapHotkey = { 'alt', 'ctrl', 'shift' }
 
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'right', function() hs.window.focusedWindow():move(units.right, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'right', function() hs.window.focusedWindow():move(units.rightBig, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'left', function() hs.window.focusedWindow():move(units.left, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'left', function() hs.window.focusedWindow():move(units.leftBig, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'up', function() hs.window.focusedWindow():move(units.top, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'up', function() hs.window.focusedWindow():move(units.topBig, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'down', function() hs.window.focusedWindow():move(units.bot, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'down', function() hs.window.focusedWindow():move(units.botBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'right', function() hs.window.focusedWindow():move(units.right, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, 'right', function() hs.window.focusedWindow():move(units.rightBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'left', function() hs.window.focusedWindow():move(units.left, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, 'left', function() hs.window.focusedWindow():move(units.leftBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'up', function() hs.window.focusedWindow():move(units.top, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, 'up', function() hs.window.focusedWindow():move(units.topBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'down', function() hs.window.focusedWindow():move(units.bot, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, 'down', function() hs.window.focusedWindow():move(units.botBig, nil, true) end)
 
 -- windows to all the corners, always 1/4 screen.
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'l', function() hs.window.focusedWindow():move(units.topRightBig, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, 'k', function() hs.window.focusedWindow():move(units.topLeftBig, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, ',', function() hs.window.focusedWindow():move(units.botLeftBig, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceBigHotkey, ".", function() hs.window.focusedWindow():move(units.botRightBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'l', function() hs.window.focusedWindow():move(units.upright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, 'l', function() hs.window.focusedWindow():move(units.topRightBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'k', function() hs.window.focusedWindow():move(units.upleft, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, 'k', function() hs.window.focusedWindow():move(units.topLeftBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, ',', function() hs.window.focusedWindow():move(units.botleft, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, ',', function() hs.window.focusedWindow():move(units.botLeftBig, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, ".", function() hs.window.focusedWindow():move(units.botright, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowBigSnapHotkey, ".", function() hs.window.focusedWindow():move(units.botRightBig, nil, true) end)
 
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowPlaceHotkey, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'f', function() hs.window.focusedWindow():move(units.maximum, nil, true) end)
+togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(windowSnapHotkey, 'm', function() hs.window.focusedWindow():move(units.middle, nil, true) end)
 
 -----------------------------------------------------------
 -- Window placement: which screen to place on
@@ -127,120 +222,9 @@ togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind({ 'ctrl', 'shift' }, 'left', fu
 -- SCREENS (macos spaces)
 -----------------------------------------------------------
 
-spacesHotKey = {'cmd', 'shift'}
--- these are actually set in keyboard shortcuts
+-- spacesHotKey = {'cmd', 'shift'}
+-- these are actually set in keyboard shortcuts, MacOS can do this without Hammerspoon help
 
-
------------------------------------------------------------
--- APP LAUNCHERS (alt)
------------------------------------------------------------
-
-function switchToApp(app)
-  hs.alert.show(app, {
-    strokeColor = hs.drawing.color.x11.black,
-    fillColor = hs.drawing.color.x11.black,
-    textColor = hs.drawing.color.x11.yellow,
-    strokeWidth = 5,
-    -- radius = 40,
-    textSize = 20,
-    -- fadeInDuration = 0,
-    atScreenEdge = 1
-  }, nil, 1)
-
-  if (string.find(app, '/') == 1) -- starts with a /, it is a path, otherwise assume it's an app by name
-  then 
-    hs.open(app)
-  else
-    hs.application.open(app)
-  end
-  leaveMode()
-end
-
--- Mapped keys
-appLaunchHotkey = {'alt'}
-if isPersonalHost
-then
-  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'w',  function() switchToApp('/Applications/Firefox.app') end) -- Web
-  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'm', function() switchToApp('Mail.app') end) -- Mail
-end
-if isWorkHost
-then
-  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'w',  function() switchToApp(os.getenv("HOME")..'/Applications/Firefox.app') end) -- Web. avoid old, enterprise managed installation of ff
-  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'm', function() switchToApp('Microsoft Outlook.app') end) -- Mail
-  togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'b',  function() switchToApp('BlueJeans.app') end) -- Bluejeans
-end
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 's',  function() switchToApp('Slack.app') end) -- Slack
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 't',  function() switchToApp('iTerm.app') end) -- Terminal 
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'v',  function() switchToApp('Visual Studio Code.app') end) -- Editor
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'e',  function() switchToApp('Visual Studio Code.app') end) -- Editor
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'a',  function() switchToApp('Atom.app') end) -- Editor
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'i',  function() switchToApp('IntelliJ IDEA CE.app') end) -- Editor
-togglyHotkeys[#togglyHotkeys+1] = hs.hotkey.bind(appLaunchHotkey, 'f',  function() switchToApp(os.getenv("HOME")) end) -- File manager, $HOME
-
-
---
--- ARCHIVAL keybindings
---
-
--- We need to store the reference to the alert window
-archiveLauncherAlertWindow = nil
-
--- This is the key mode handle
-launchArchiveMode = hs.hotkey.modal.new({}, nil, '')
-
--- Leaves the launch mode, returning the keyboard to its normal
--- state, and closes the alert window, if it's showing
-function leaveArchiveMode()
-  if archiveLauncherAlertWindow ~= nil then
-    hs.alert.closeSpecific(archiveLauncherAlertWindow, 0)
-    archiveLauncherAlertWindow = nil
-  end
-  launchArchiveMode:exit()
-end
-
-function launchArchivalFunction(app)
-  hs.alert.show(app, {
-    strokeColor = hs.drawing.color.x11.black,
-    fillColor = hs.drawing.color.x11.black,
-    textColor = hs.drawing.color.x11.yellow,
-    strokeWidth = 5,
-    -- radius = 40,
-    textSize = 20,
-    -- fadeInDuration = 0,
-    atScreenEdge = 1
-  }, nil, 1)
-  hs.execute(app)
-  leaveArchiveMode()
-end
-
-hs.hotkey.bind({ 'alt' }, 'n', function()
-  launchArchiveMode:enter()
-  archiveLauncherAlertWindow = hs.alert.show('Notesman Launcher Mode', {
-    strokeColor = hs.drawing.color.x11.black,
-    -- fillColor = hs.drawing.color.x11.white,
-    textColor = hs.drawing.color.x11.green,
-    strokeWidth = 5,
-    -- radius = 40,
-    -- textSize = 16,
-    -- fadeInDuration = 0,
-    -- atScreenEdge = 2
-  }, 'infinite')
-end)
-
--- When in launch mode, hitting alt+space again leaves it
-launchArchiveMode:bind({ 'alt' }, 'n', function() leaveArchiveMode() end)
-launchArchiveMode:bind({}, 'd',  function() launchArchivalFunction([["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents-DISNEY/NOTES/DISNEY/todos-DIS.md"]]) end) -- DISNEY notes management
-launchArchiveMode:bind({}, 'm',  function() launchArchivalFunction([["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents/NOTES/ME/TODO.md"]]) end) -- ME notes management
--- togglyHotkeys[#togglyHotkeys+1] = launchArchiveMode.bind({"alt"}, {'a', 'd'},  function() hs.execute [["/Users/robert/.cargo/bin/notesman" "/Users/robert/Documents-DISNEY/NOTES/DISNEY/todos-DIS.md"]] end)
-
------------------------------------------------------------
--- Reload hammerspoon config
------------------------------------------------------------
--- manual reload
--- hs.hotkey.bind({"cmd", "alt", "ctrl"}, "R", function()
---   hs.reload()
--- end)
--- hs.alert.show("Config loaded")
 
 -- file change triggers reload
 function reloadConfig(files)
@@ -274,12 +258,12 @@ function ssidChangedCallback()
 
   if newSSID == homeSSID and lastSSID ~= homeSSID then
       -- We just joined our home WiFi network
-      --hs.audiodevice.defaultOutputDevice():setVolume(25)
-  -- elseif newSSID ~= homeSSID and lastSSID == homeSSID then
-  --     -- We just departed our home WiFi network
-  --     hs.audiodevice.defaultOutputDevice():setVolume(0)
-  else
-    hs.audiodevice.defaultOutputDevice():setVolume(0)
+      hs.audiodevice.defaultOutputDevice():setVolume(25)
+  elseif newSSID ~= homeSSID and lastSSID == homeSSID then
+      -- We just departed our home WiFi network
+      hs.audiodevice.defaultOutputDevice():setVolume(0)
+  -- else
+  --   hs.audiodevice.defaultOutputDevice():setVolume(10)
     
   end
   lastSSID = newSSID
@@ -292,17 +276,20 @@ wifiWatcher:start()
 -----------------------------------------------------------
 -- url triggers
 -----------------------------------------------------------
--- example use from the command line: `open -g hammerspoon://alert?message="A message for you!"`
--- example use from the command line (-g seems not needed): `open hammerspoon://alert?message="A message for you!"`
+-- example use from the command line: `open hammerspoon://alert\?title="testtitle"\&message="hopethisworks"`
 hs.urlevent.bind("alert", function(eventName, params)
   --hs.alert.show(params["message"]) -- hammerspoon alert (shorter, less intrusive)
-  hs.notify.new({title="Hammerspoon", informativeText=params["message"]}):send() -- native macos notifier
+  hs.notify.new({title=params['title'], informativeText=params['message']}):send() -- native macos notifier
 end)
 
+-- ¿this method does not alert me of my text messages?
+-- example use: `open hammerspoon://imessage\?message="test message to myself"`
 hs.urlevent.bind("imessage", function(eventName, params)
   hs.messages.iMessage(config.iMessage.me, params["message"])
 end)
 
+-- this seems to silently fail now
+-- example use: `open hammerspoon://say\?message="say something"`
 hs.urlevent.bind("say", function(eventName, params)
   talker = hs.speech.new()
   talker:speak(params["message"])
@@ -314,15 +301,24 @@ end)
 -- togglyHotkeys has to be defined at the top, and these binding set up AFTER keybinds are added to the togglyHotkeys table
 
 --------------------------------------------------------------------------------
-hs.hotkey.bind({"ctrl","alt","cmd"}, 'e', function() enableTogglyHotKeys() end)
-hs.hotkey.bind({"ctrl","alt","cmd"}, 'd', function() disableTogglyHotkeys() end)
+hs.hotkey.bind({"ctrl","alt","cmd"}, '1', function() enableTogglyHotKeys() end)
+hs.hotkey.bind({"ctrl","alt","cmd"}, '0', function() disableTogglyHotkeys() end)
 
 function enableTogglyHotKeys()
   for i = 1, #togglyHotkeys, 1 
   do
     togglyHotkeys[i]:enable();
   end
-  hs.alert("enabling togglyHotkeys")
+  hs.alert("enabling togglyHotkeys", {                  
+    strokeColor = hs.drawing.color.x11.black,
+    -- fillColor = hs.drawing.color.x11.black,
+    textColor = hs.drawing.color.x11.green,
+    -- strokeWidth = 5,
+    radius = 20,
+    textSize = 35,
+    fadeInDuration = .5,
+    -- atScreenEdge = 1
+  }, 2)
 end
 
 function disableTogglyHotkeys()
@@ -330,5 +326,15 @@ function disableTogglyHotkeys()
   do
     togglyHotkeys[i]:disable();
   end
-  hs.alert("disabling togglyHotkeys")
+  hs.alert("disabling togglyHotkeys", {                  
+    strokeColor = hs.drawing.color.x11.black,
+    -- fillColor = hs.drawing.color.x11.black,
+    textColor = hs.drawing.color.x11.orange,
+    -- strokeWidth = 5,
+    radius = 20,
+    textSize = 35,
+    fadeInDuration = .5,
+    -- atScreenEdge = 1
+  }, 2)
 end
+
